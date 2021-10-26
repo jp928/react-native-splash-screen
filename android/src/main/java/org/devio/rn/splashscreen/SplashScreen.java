@@ -15,11 +15,8 @@ import java.lang.ref.WeakReference;
 
 /**
  * SplashScreen
- * 启动屏
- * from：http://www.devio.org
- * Author:CrazyCodeBoy
- * GitHub:https://github.com/crazycodeboy
- * Email:crazycodeboy@gmail.com
+ * GitHub:https://github.com/jp928
+ * Email:piaojingtai@gmail.com
  */
 public class SplashScreen {
     private static Dialog mSplashDialog;
@@ -28,16 +25,24 @@ public class SplashScreen {
     private static VideoView mVideoView;
 
     /**
-     * 打开启动屏
+     * Open splash
      */
     public static void show(final Activity activity, final int themeResId) {
         if (activity == null) return;
         mActivity = new WeakReference<Activity>(activity);
+
         activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 if (!activity.isFinishing()) {
                     mSplashDialog = new Dialog(activity, themeResId);
+                    mSplashDialog.getWindow().getDecorView().setSystemUiVisibility(
+                            View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                                    | View.SYSTEM_UI_FLAG_FULLSCREEN
+                                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
                     mSplashDialog.setContentView(R.layout.launch_screen);
                     mSplashDialog.setCancelable(false);
 
@@ -63,16 +68,15 @@ public class SplashScreen {
                             //I prefer Center Inside so I am using Math.min
                             float scale = Math.min(xScale, yScale);
                             mVideoView.setScaleX(1/scale);
-                            mVideoView.setScaleY(1/scale);
 
                             float scaledWidth = scale * videoWidth;
-                            float scaledHeight = scale * videoHeight;
 
                             // Set the new size for the VideoView based on the dimensions of the video
                             ViewGroup.LayoutParams layoutParams = mVideoView.getLayoutParams();
                             layoutParams.width = (int)scaledWidth;
-                            layoutParams.height = (int)scaledHeight;
+                            layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT;
                             mVideoView.setLayoutParams(layoutParams);
+
                         }
                     });
 
@@ -82,21 +86,13 @@ public class SplashScreen {
                     if (!mSplashDialog.isShowing()) {
                         mSplashDialog.show();
                     }
-
-                   mSplashDialog.getWindow().getDecorView().setSystemUiVisibility(
-                           View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                                       | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                                       | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                                       | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                                       | View.SYSTEM_UI_FLAG_FULLSCREEN
-                                       | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
                 }
             }
         });
     }
 
     /**
-     * 打开启动屏
+     * Open splash
      */
     public static void show(final Activity activity, final boolean fullScreen) {
         int resourceId = fullScreen ? R.style.SplashScreen_Fullscreen : R.style.SplashScreen_SplashTheme;
@@ -105,14 +101,14 @@ public class SplashScreen {
     }
 
     /**
-     * 打开启动屏
+     * Open splash
      */
     public static void show(final Activity activity) {
         show(activity, true);
     }
 
     /**
-     * 关闭启动屏
+     * Hide splash
      */
     public static void hide(Activity activity) {
         if (activity == null) {
@@ -132,7 +128,7 @@ public class SplashScreen {
                 if (mSplashDialog != null && mSplashDialog.isShowing()) {
                     mVideoView.start();
 
-                    SystemClock.sleep(2200);
+                    SystemClock.sleep(2500);
                     boolean isDestroyed = false;
 
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
