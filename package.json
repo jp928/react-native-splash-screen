@@ -1,6 +1,6 @@
 {
   "name": "@nectr-rn/react-native-splash-screen",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "A splash screen for react-native, hide when application loaded ,it works on iOS and Android.",
   "main": "index.js",
   "scripts": {

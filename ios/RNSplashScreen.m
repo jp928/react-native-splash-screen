@@ -70,6 +70,8 @@ RCT_EXPORT_MODULE(SplashScreen)
 }
 
 + (void)hide {
+    [player play];
+    [NSThread sleepForTimeInterval:2.2f];
     if (waiting) {
         dispatch_async(dispatch_get_main_queue(), ^{
             waiting = false;
@@ -85,8 +87,6 @@ RCT_EXPORT_MODULE(SplashScreen)
 
 + (void) jsLoadError:(NSNotification*)notification
 {
-    [player play];
-    [NSThread sleepForTimeInterval:2.2f];
     // If there was an error loading javascript, hide the splash screen so it can be shown.  Otherwise the splash screen will remain forever, which is a hassle to debug.
     [RNSplashScreen hide];
 }
