@@ -50,7 +50,10 @@ RCT_EXPORT_MODULE(SplashScreen)
         
         moviePlayerController.showsPlaybackControls = NO;
         
-        [loadView addSubview:moviePlayerController.view];
+        [UIView transitionWithView:loadView duration:0.5
+                options:UIViewAnimationOptionCurveEaseIn
+                animations:^ { [loadView addSubview:moviePlayerController.view]; }
+                completion:nil];
         
     }
 
@@ -78,7 +81,7 @@ RCT_EXPORT_MODULE(SplashScreen)
         });
     } else {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            [UIView animateWithDuration:0.2
+            [UIView animateWithDuration:0.5
                 animations:^{loadingView.alpha = 0.0;}
                 completion:^(BOOL finished){ [loadingView removeFromSuperview]; }];
         });
