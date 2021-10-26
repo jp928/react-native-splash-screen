@@ -76,7 +76,9 @@ RCT_EXPORT_MODULE(SplashScreen)
         });
     } else {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            [loadingView removeFromSuperview];
+            [UIView animateWithDuration:0.2
+                animations:^{loadingView.alpha = 0.0;}
+                completion:^(BOOL finished){ [loadingView removeFromSuperview]; }];
         });
     }
 }
@@ -84,7 +86,7 @@ RCT_EXPORT_MODULE(SplashScreen)
 + (void) jsLoadError:(NSNotification*)notification
 {
     [player play];
-    [NSThread sleepForTimeInterval:2.0f];
+    [NSThread sleepForTimeInterval:2.2f];
     // If there was an error loading javascript, hide the splash screen so it can be shown.  Otherwise the splash screen will remain forever, which is a hassle to debug.
     [RNSplashScreen hide];
 }
