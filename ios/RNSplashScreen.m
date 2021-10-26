@@ -9,10 +9,13 @@
 
 #import "RNSplashScreen.h"
 #import <React/RCTBridge.h>
+#import <AVKit/AVkit.h>
 
 static bool waiting = true;
 static bool addedJsLoadErrorObserver = false;
 static UIView* loadingView = nil;
+static AVPlayerViewController* moviePlayerController = nil;
+static AVPlayer* player;
 
 @implementation RNSplashScreen
 - (dispatch_queue_t)methodQueue{
@@ -32,12 +35,34 @@ RCT_EXPORT_MODULE(SplashScreen)
     }
 }
 
++ (void)addVideoView: (UIView*)loadView {
+    if (!moviePlayerController) {
+        NSBundle *bundle = [NSBundle mainBundle];
+        NSString *moviePath = [bundle pathForResource:@"splash" ofType:@"mp4"];
+        NSURL *url = [NSURL fileURLWithPath:moviePath];
+        
+        player = [AVPlayer playerWithURL:url];
+        
+        moviePlayerController = [[AVPlayerViewController alloc] init];
+
+        moviePlayerController.videoGravity = AVLayerVideoGravityResizeAspectFill;
+        moviePlayerController.player = player;
+        
+        moviePlayerController.showsPlaybackControls = NO;
+        
+        [loadView addSubview:moviePlayerController.view];
+        
+    }
+
+}
+
 + (void)showSplash:(NSString*)splashScreen inRootView:(UIView*)rootView {
     if (!loadingView) {
         loadingView = [[[NSBundle mainBundle] loadNibNamed:splashScreen owner:self options:nil] objectAtIndex:0];
         CGRect frame = rootView.frame;
         frame.origin = CGPointMake(0, 0);
         loadingView.frame = frame;
+        [self addVideoView: loadingView];
     }
     waiting = false;
     
@@ -58,6 +83,8 @@ RCT_EXPORT_MODULE(SplashScreen)
 
 + (void) jsLoadError:(NSNotification*)notification
 {
+    [player play];
+    [NSThread sleepForTimeInterval:2.0f];
     // If there was an error loading javascript, hide the splash screen so it can be shown.  Otherwise the splash screen will remain forever, which is a hassle to debug.
     [RNSplashScreen hide];
 }
