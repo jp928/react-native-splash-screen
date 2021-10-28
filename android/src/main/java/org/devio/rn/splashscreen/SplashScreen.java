@@ -45,10 +45,8 @@ public class SplashScreen {
                                     | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
                     mSplashDialog.setContentView(R.layout.launch_screen);
                     mSplashDialog.setCancelable(false);
-
-                    Uri uri = Uri.parse("android.resource://"+activity.getPackageName()+"/"+ R.raw.splash); //Declare your url here.
-
                     mVideoView = mSplashDialog.findViewById(R.id.video_view);
+                    Uri uri = Uri.parse("android.resource://"+mActivity.get().getPackageName()+"/"+ R.raw.splash);
                     mVideoView.setVideoURI(uri);
 
                     mVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
@@ -63,19 +61,15 @@ public class SplashScreen {
 
                             float xScale = (float) videoViewWidth / videoWidth;
                             float yScale = (float) videoViewHeight / videoHeight;
-
-                            //For Center Inside use the Math.min scale.
-                            //I prefer Center Inside so I am using Math.min
-                            float scale = Math.min(xScale, yScale);
-                            mVideoView.setScaleX(1/scale);
-
-                            float scaledWidth = scale * videoWidth;
-
+                            
                             // Set the new size for the VideoView based on the dimensions of the video
                             ViewGroup.LayoutParams layoutParams = mVideoView.getLayoutParams();
-                            layoutParams.width = (int)scaledWidth;
+                            layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
                             layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT;
+
                             mVideoView.setLayoutParams(layoutParams);
+
+                            mVideoView.setScaleX(yScale/xScale);
 
                         }
                     });
