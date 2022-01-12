@@ -54,7 +54,6 @@ RCT_EXPORT_MODULE(SplashScreen)
                 options:UIViewAnimationOptionCurveEaseIn
                 animations:^ { [loadView addSubview:moviePlayerController.view]; }
                 completion:nil];
-        
     }
 
 }
@@ -67,25 +66,26 @@ RCT_EXPORT_MODULE(SplashScreen)
         loadingView.frame = frame;
         [self addVideoView: loadingView];
     }
-    waiting = false;
-    
+
     [rootView addSubview:loadingView];
 }
 
 + (void)hide {
     [player play];
-    [NSThread sleepForTimeInterval:2.2f];
-    if (waiting) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            waiting = false;
-        });
-    } else {
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            [UIView animateWithDuration:0.5
-                animations:^{loadingView.alpha = 0.0;}
-                completion:^(BOOL finished){ [loadingView removeFromSuperview]; }];
-        });
-    }
+    CMTime timeInterval = CMTimeMakeWithSeconds(0.2, NSEC_PER_SEC);
+    dispatch_queue_t mainQueue = dispatch_get_main_queue();
+    [player addPeriodicTimeObserverForInterval:(timeInterval) queue:mainQueue usingBlock:^(CMTime time){
+      NSTimeInterval seconds = CMTimeGetSeconds(time);
+      NSInteger intSec = seconds;
+         
+      if (intSec > 1.8) {
+        waiting = false;
+        
+        [UIView animateWithDuration:0.5
+            animations:^{loadingView.alpha = 0.0;}
+            completion:^(BOOL finished){ [loadingView removeFromSuperview]; }];
+      }
+     }];
 }
 
 + (void) jsLoadError:(NSNotification*)notification
